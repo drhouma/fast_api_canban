@@ -2,14 +2,17 @@ from fastapi import FastAPI
 from sqlalchemy import text
 from starlette.middleware.cors import CORSMiddleware
 
-from app.db.database import create_tables, get_db, sync_engine, delete_tables
+from app.db.database import get_db, sync_engine
+from app.db.on_start import create_tables, delete_tables, insert_data
 from contextlib import asynccontextmanager, contextmanager
-from app.routers.tasks import router
+from app.routers.tasks import task_router
+from app.routers.auth import auth_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("lifespan worked correctly")
     create_tables()
+    insert_data()
     try:
         yield
     finally:
@@ -27,5 +30,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router)
+app.include_router(task_router)
+app.include_router(auth_router)
 

@@ -3,31 +3,184 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Канбан-доска</title>
+  <meta name="theme-color" content="#f7f8fc">
+  <title>Taskflow — рабочее пространство</title>
   <link rel="stylesheet" href="style.css">
-  <script src="app.js" defer></script>
+  <script type="module" src="js/app.js"></script>
 </head>
 <body>
-  <main class="app">
-    <header class="header">
-      <div>
-        <p class="eyebrow">ПРОЕКТ</p>
-        <h1>Канбан-доска</h1>
-      </div>
-      <button class="button button-light" id="refresh">Обновить</button>
-    </header>
+  <!-- Авторизация -->
+  <main id="auth-screen" class="auth-screen">
+    <section class="auth-card">
+      <a class="brand" href="#">
+        <span class="brand-icon">T</span>
+        <span>taskflow</span>
+      </a>
 
-    <form class="task-form" id="task-form">
-      <h2>Новая задача</h2>
-      <div class="form-fields">
-        <input id="title" placeholder="Название задачи" required>
-        <input id="description" placeholder="Описание (необязательно)">
-        <button class="button" type="submit">Добавить</button>
+      <div class="auth-heading">
+        <p class="eyebrow">ТВОЁ РАБОЧЕЕ ПРОСТРАНСТВО</p>
+        <h1 id="auth-title">С возвращением!</h1>
+        <p id="auth-subtitle">Войди, чтобы продолжить работу над проектами.</p>
       </div>
-    </form>
 
-    <p class="error" id="error" role="alert" hidden></p>
-    <section class="board" id="board" aria-label="Задачи"></section>
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" id="login-tab">
+          Вход
+        </button>
+        <button type="button" class="auth-tab" id="register-tab">
+          Регистрация
+        </button>
+      </div>
+
+      <form id="auth-form">
+        <label class="field">
+          <span>Email</span>
+          <input
+            id="auth-email"
+            type="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+            required
+          >
+        </label>
+
+        <label class="field">
+          <span>Пароль</span>
+          <input
+            id="auth-password"
+            type="password"
+            placeholder="Не менее 3 символов"
+            autocomplete="current-password"
+            minlength="3"
+            required
+          >
+        </label>
+
+        <button class="button primary full-width" id="auth-submit" type="submit">
+          Войти в аккаунт
+        </button>
+      </form>
+
+      <p class="error auth-error" id="auth-error" role="alert" hidden></p>
+      <p class="auth-footnote">Твои задачи и проекты в одном месте.</p>
+    </section>
   </main>
+
+  <!-- Рабочее пространство -->
+  <div id="workspace" class="workspace" hidden>
+    <aside class="sidebar">
+      <a class="brand sidebar-brand" href="#">
+        <span class="brand-icon">T</span>
+        <span>taskflow</span>
+      </a>
+
+      <div class="workspace-label">РАБОЧЕЕ ПРОСТРАНСТВО</div>
+
+      <button type="button" class="nav-item active">
+        <span>▦</span> Мои доски
+      </button>
+
+      <div class="sidebar-section">
+        <div class="section-heading">
+          <span>ТВОИ ДОСКИ</span>
+          <button
+            id="create-board"
+            class="icon-button"
+            type="button"
+            title="Создать доску"
+            aria-label="Создать доску"
+          >+</button>
+        </div>
+
+        <nav id="boards-list" class="boards-list" aria-label="Мои доски">
+          <p class="sidebar-muted">Загрузка досок...</p>
+        </nav>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="user-avatar" id="user-avatar">U</div>
+        <div class="user-details">
+          <strong id="user-email">Пользователь</strong>
+          <span>Мой аккаунт</span>
+        </div>
+        <button
+          type="button"
+          class="icon-button logout-button"
+          id="logout"
+          title="Выйти"
+          aria-label="Выйти из аккаунта"
+        >↪</button>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <div class="breadcrumbs">
+          <span>Мои доски</span>
+          <span class="breadcrumb-separator">/</span>
+          <strong id="current-board-name">Выбери доску</strong>
+        </div>
+
+        <div class="topbar-actions">
+          <span class="connection-dot"></span>
+          <span class="connection-label">Рабочее пространство</span>
+          <button type="button" class="button secondary" id="refresh">
+            ↻ <span>Обновить</span>
+          </button>
+        </div>
+      </header>
+
+      <section class="content">
+        <div id="board-empty" class="welcome-state">
+          <div class="welcome-icon">▦</div>
+          <h1>Всё начинается с идеи</h1>
+          <p>Выбери доску слева или создай новую, чтобы организовать свои задачи.</p>
+          <button class="button primary" id="create-first-board" type="button">
+            + Создать доску
+          </button>
+        </div>
+
+        <div id="board-content" hidden>
+          <div class="board-heading">
+            <div>
+              <p class="eyebrow">ТВОЙ ПРОЕКТ</p>
+              <h1 id="board-title">Моя доска</h1>
+              <p id="board-subtitle">Планируй, выполняй, достигай.</p>
+            </div>
+            <div class="board-stats">
+              <span class="stats-number" id="task-total">0</span>
+              <span>задач на доске</span>
+            </div>
+          </div>
+
+          <form id="task-form" class="task-form">
+            <div class="task-form-icon">+</div>
+            <div class="task-form-fields">
+              <input
+                id="title"
+                type="text"
+                placeholder="Что нужно сделать?"
+                maxlength="200"
+                required
+              >
+              <input
+                id="description"
+                type="text"
+                placeholder="Добавь описание (необязательно)"
+                maxlength="2000"
+              >
+            </div>
+            <button class="button primary" type="submit" id="add-task">
+              Добавить задачу
+            </button>
+          </form>
+
+          <p class="error" id="error" role="alert" hidden></p>
+
+          <section class="board" id="board" aria-label="Задачи доски"></section>
+        </div>
+      </section>
+    </main>
+  </div>
 </body>
 </html>
