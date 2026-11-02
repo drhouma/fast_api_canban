@@ -33,6 +33,11 @@
       </div>
 
       <form id="auth-form">
+        <label class="field" id="username-field" hidden>
+          <span>Имя пользователя</span>
+          <input id="auth-username" type="text" maxlength="50" autocomplete="username" placeholder="Например, alex">
+        </label>
+
         <label class="field">
           <span>Email</span>
           <input
@@ -49,9 +54,9 @@
           <input
             id="auth-password"
             type="password"
-            placeholder="Не менее 3 символов"
+            placeholder="Введите пароль"
             autocomplete="current-password"
-            minlength="3"
+            minlength="8"
             required
           >
         </label>

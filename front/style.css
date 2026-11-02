@@ -842,3 +842,32 @@ button:disabled {
     padding: 25px 21px;
   }
 }
+
+/* Дополнительная адаптация */
+input, select {
+  font: inherit;
+}
+
+.field input,
+.status-label select {
+  transition: border-color .15s, box-shadow .15s;
+}
+
+.field input:focus,
+.status-label select:focus {
+  outline: none;
+  border-color: #a9a2fa;
+  box-shadow: 0 0 0 3px #6558e812;
+}
+
+@media (max-width: 650px) {
+  .topbar {
+    flex-wrap: wrap;
+  }
+  .breadcrumbs {
+    max-width: 100%;
+  }
+  .board-heading {
+    flex-wrap: wrap;
+  }
+}

@@ -19,6 +19,10 @@ class UserRepository:
         result = self.db.execute(stmt).scalars().one_or_none()
         return result
 
+    def get_user_by_id(self, user_id: int):
+        stmt = select(User).where(User.id == user_id)
+        result = self.db.execute(stmt).scalars().one_or_none()
+        return result
 
 def get_user_repo(db: Annotated[Session, Depends(get_db)]) :
     return UserRepository(db)

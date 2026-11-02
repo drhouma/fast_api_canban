@@ -6,7 +6,8 @@ from app.db.database import get_db, sync_engine
 from app.db.on_start import create_tables, delete_tables, insert_data
 from contextlib import asynccontextmanager, contextmanager
 from app.routers.tasks import task_router
-from app.routers.auth import auth_router
+from app.routers.auth import router as auth_router
+from app.routers.board import router as board_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -32,4 +33,5 @@ app.add_middleware(
 
 app.include_router(task_router)
 app.include_router(auth_router)
+app.include_router(board_router)
 

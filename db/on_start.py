@@ -15,7 +15,7 @@ def delete_tables():
 
 def insert_data():
     session = sessionLocal()
-    pwd=password_hash.hash("123321")
+    pwd=password_hash.hash("12332123")
     session.add(User(email="andre@mail.ru", username="Andre", hashed_password=pwd))
     session.commit()
     session.close()

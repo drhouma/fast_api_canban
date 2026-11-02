@@ -6,11 +6,8 @@ initTasks();
 initBoards();
 initAuth();
 
-document.addEventListener("auth:login", () => {
-  loadBoards();
-});
+document.addEventListener("auth:login", () => loadBoards());
 
 document.addEventListener("auth:logout", () => {
-  // Очищаем состояние задач при выходе.
   document.dispatchEvent(new Event("board:change"));
 });

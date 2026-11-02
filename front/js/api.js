@@ -13,9 +13,7 @@ export function getToken() {
 export async function api(path, method = "GET", options = {}) {
   const headers = new Headers(options.headers || {});
 
-  if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
-  }
+  if (token) headers.set("Authorization", `Bearer ${token}`);
 
   if (
     options.body &&
@@ -33,22 +31,25 @@ export async function api(path, method = "GET", options = {}) {
 
   if (!response.ok) {
     let message = `Ошибка API: ${response.status}`;
-
     try {
       const data = await response.json();
       message = data.detail || data.message || message;
+      if (Array.isArray(message)) {
+        message = message.map(item => item.msg || String(item)).join("; ");
+      }
     } catch {
-      // Сервер мог вернуть ответ не в JSON.
+      // Ответ может быть не JSON.
     }
-
     const error = new Error(message);
     error.status = response.status;
     throw error;
   }
 
-  if (response.status === 204) {
-    return null;
-  }
+  if (response.status === 204) return null;
+  if (response.status === 202) return null;
 
-  return response.json();
+  const contentType = response.headers.get("content-type") || "";
+  return contentType.includes("application/json")
+    ? response.json()
+    : response.text();
 }
