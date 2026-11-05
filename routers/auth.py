@@ -27,9 +27,9 @@ def register(
     try:
         user = auth_service.register_user(user_data)
     except UserAlreadyExistsError:
-        return HTTPException(
+        raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="User already exists"
+            detail="User with that email already exists."
         )
     return user
 

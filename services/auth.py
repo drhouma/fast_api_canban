@@ -10,10 +10,9 @@ from starlette import status
 from app.models.user import User
 from app.repositories.user import UserRepository, get_user_repo
 from app.schemas.user import UserCreate
-from app.security import verify_password
+from app.security import verify_password, SECRET_KEY, algo
 from app.exceptions import UserAlreadyExistsError
 
-SECRET_KEY = "SECRET_KEY"
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="/auth/login"
@@ -50,7 +49,7 @@ class AuthService:
         token = jwt.encode(
             payload,
             SECRET_KEY,
-            algorithm="HS256"
+            algorithm=algo
         )
         return token
 
@@ -68,7 +67,7 @@ class AuthService:
             payload = jwt.decode(
                 token,
                 SECRET_KEY,
-                algorithms="HS256",
+                algorithms=algo
             )
 
             user_id = payload.get("sub")
@@ -120,7 +119,7 @@ def get_current_user(
         payload = jwt.decode(
             token,
             SECRET_KEY,
-            algorithms=["HS256"],
+            algorithms=algo,
         )
 
         user_id = payload.get("sub")
