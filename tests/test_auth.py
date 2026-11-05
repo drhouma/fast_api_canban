@@ -1,0 +1,29 @@
+from app.tests.conf_test import register_user, auth_headers, user_data
+import pytest
+
+# def test_register_user():
+#     ...
+#
+# def test_register_user_with_existing_email():
+#     ...
+#
+# def test_register_user_with_invalid_email():
+#     ...
+
+# def test_login_with_correct_credentials():
+#     ...
+#
+# def test_login_with_wrong_password():
+#     ...
+#
+# def test_login_with_nonexistent_user():
+#     ...
+#
+# def test_get_current_user():
+#     ...
+#
+# def test_get_current_user_without_token():
+#     ...
+#
+# def test_get_current_user_with_invalid_token():
+#     ...

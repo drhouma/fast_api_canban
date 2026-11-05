@@ -7,7 +7,7 @@ from app.schemas.user import UserCreate, UserResponse, Token
 from app.services.auth import AuthService, get_auth_service
 from app.services.auth import get_current_user
 from app.models.user import User
-
+from app.exceptions import UserAlreadyExistsError
 
 router = APIRouter(
     prefix="/auth",
@@ -24,7 +24,14 @@ def register(
     user_data: UserCreate,
     auth_service: Annotated[AuthService, Depends(get_auth_service)]
 ):
-    return auth_service.register_user(user_data)
+    try:
+        user = auth_service.register_user(user_data)
+    except UserAlreadyExistsError:
+        return HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="User already exists"
+        )
+    return user
 
 
 @router.post(

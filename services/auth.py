@@ -4,15 +4,14 @@ from typing import Annotated
 import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from pwdlib import PasswordHash
-from select import select
-from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from starlette import status
 
 from app.models.user import User
-from app.db.database import get_db
 from app.repositories.user import UserRepository, get_user_repo
-password_hash = PasswordHash.recommended()
+from app.schemas.user import UserCreate
+from app.security import verify_password
+from app.exceptions import UserAlreadyExistsError
 
 SECRET_KEY = "SECRET_KEY"
 
@@ -32,7 +31,7 @@ class AuthService:
             password: str
     ):
         user = self.user_repo.get_user_by_email(email)
-        if not user or not password_hash.verify(password, user.hashed_password):
+        if not user or not verify_password(password, user.hashed_password):
             return None
         return user
 
@@ -89,8 +88,18 @@ class AuthService:
 
         return user
 
-    def register_user(self):
-        pass
+    def register_user(self, user_data: UserCreate):
+        data = user_data.model_dump(exclude_unset=True)
+        try:
+            user = self.user_repo.create_user(**data)
+        except IntegrityError as err:
+
+            constraint_name = err.orig.diag.constraint_name
+
+            if constraint_name == "uq_users_email":
+                raise UserAlreadyExistsError ("user with this email already exists")
+            raise
+        return user
 
 
 def get_auth_service(user_repo: Annotated[UserRepository, Depends(get_user_repo)]):
